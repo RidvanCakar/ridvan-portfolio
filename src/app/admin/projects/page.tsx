@@ -1,13 +1,14 @@
 'use client';
 
 import { useState, useEffect, FormEvent } from 'react';
-import { getProjects, addProject, deleteProject } from '@/lib/actions';
+import { getProjects, addProject, updateProject, deleteProject } from '@/lib/actions';
 
 export default function ProjectsAdmin() {
   const [projects, setProjects] = useState<any[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
   
+  const [editingId, setEditingId] = useState<number | null>(null);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [link, setLink] = useState('');
@@ -22,14 +23,35 @@ export default function ProjectsAdmin() {
     setProjects(data);
   };
 
-  const handleAdd = async (e: FormEvent) => {
+  const handleSave = async (e: FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    await addProject({ title, description, link, image_url: imageUrl });
-    setTitle(''); setDescription(''); setLink(''); setImageUrl('');
-    setShowModal(false);
+    if (editingId) {
+      await updateProject(editingId, { title, description, link, image_url: imageUrl });
+    } else {
+      await addProject({ title, description, link, image_url: imageUrl });
+    }
+    closeModal();
     await loadProjects();
     setLoading(false);
+  };
+
+  const openEditModal = (p: any) => {
+    setEditingId(p.id);
+    setTitle(p.title);
+    setDescription(p.description);
+    setLink(p.link || '');
+    setImageUrl(p.image_url || '');
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setEditingId(null);
+    setTitle('');
+    setDescription('');
+    setLink('');
+    setImageUrl('');
+    setShowModal(false);
   };
 
   const handleDelete = async (id: number) => {
@@ -60,7 +82,8 @@ export default function ProjectsAdmin() {
               <tr key={p.id}>
                 <td>{p.title}</td>
                 <td>{p.link && <a href={p.link} target="_blank" rel="noopener noreferrer" style={{textDecoration:'underline'}}>Linki Aç</a>}</td>
-                <td>
+                <td style={{ display: 'flex', gap: '0.5rem' }}>
+                  <button onClick={() => openEditModal(p)} className="btn btn-secondary" style={{padding: '0.5rem 1rem'}}>Düzenle</button>
                   <button onClick={() => handleDelete(p.id)} className="btn btn-danger btn-secondary" style={{padding: '0.5rem 1rem'}}>Sil</button>
                 </td>
               </tr>
@@ -73,8 +96,8 @@ export default function ProjectsAdmin() {
       {showModal && (
         <div className="modal-overlay">
           <div className="glass-panel modal-content">
-            <h2 style={{ marginBottom: '1.5rem' }}>Yeni Proje Ekle</h2>
-            <form onSubmit={handleAdd} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <h2 style={{ marginBottom: '1.5rem' }}>{editingId ? 'Projeyi Düzenle' : 'Yeni Proje Ekle'}</h2>
+            <form onSubmit={handleSave} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               <input className="input" placeholder="Proje Adı" value={title} onChange={e => setTitle(e.target.value)} required />
               <textarea className="textarea" placeholder="Proje Açıklaması" rows={4} value={description} onChange={e => setDescription(e.target.value)} required />
               <input className="input" placeholder="Proje Linki (https://...)" value={link} onChange={e => setLink(e.target.value)} />
@@ -82,7 +105,7 @@ export default function ProjectsAdmin() {
               
               <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
                 <button type="submit" className="btn" disabled={loading}>{loading ? 'Kaydediliyor...' : 'Kaydet'}</button>
-                <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)} disabled={loading}>İptal</button>
+                <button type="button" className="btn btn-secondary" onClick={closeModal} disabled={loading}>İptal</button>
               </div>
             </form>
           </div>

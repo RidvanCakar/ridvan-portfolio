@@ -15,6 +15,12 @@ export async function addProject(data: { title: string, description: string, lin
   return { id: result.lastInsertRowid };
 }
 
+export async function updateProject(id: number, data: { title: string, description: string, link: string, image_url: string }) {
+  const stmt = db.prepare('UPDATE projects SET title = ?, description = ?, link = ?, image_url = ? WHERE id = ?');
+  stmt.run(data.title, data.description, data.link, data.image_url, id);
+  return { success: true };
+}
+
 export async function deleteProject(id: number) {
   const stmt = db.prepare('DELETE FROM projects WHERE id = ?');
   stmt.run(id);
@@ -32,6 +38,12 @@ export async function addExperience(data: { company: string, role: string, start
   const stmt = db.prepare('INSERT INTO experiences (company, role, start_date, end_date, details) VALUES (?, ?, ?, ?, ?)');
   const result = stmt.run(data.company, data.role, data.start_date, data.end_date, data.details);
   return { id: result.lastInsertRowid };
+}
+
+export async function updateExperience(id: number, data: { company: string, role: string, start_date: string, end_date: string, details: string }) {
+  const stmt = db.prepare('UPDATE experiences SET company = ?, role = ?, start_date = ?, end_date = ?, details = ? WHERE id = ?');
+  stmt.run(data.company, data.role, data.start_date, data.end_date, data.details, id);
+  return { success: true };
 }
 
 export async function deleteExperience(id: number) {
