@@ -16,12 +16,33 @@
   margin: 0;
 }
 
+html, body {
+  overflow-x: hidden;
+  width: 100%;
+}
+
 body {
   background-color: var(--background);
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 30px 30px;
+  background-position: center center;
   color: var(--foreground);
   font-family: 'Inter', sans-serif;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  font-size: 0.95rem; /* Base font size reduction */
+}
+
+/* Background animated overlay for extra depth */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  background: radial-gradient(circle at 50% 0%, rgba(59, 130, 246, 0.08) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: -2;
 }
 
 a {
@@ -46,20 +67,20 @@ h1, h2, h3, h4, h5, h6 {
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid var(--glass-border);
-  border-radius: 16px;
-  padding: 2rem;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
 
 .input, .textarea {
   width: 100%;
-  padding: 0.75rem 1rem;
-  border-radius: 8px;
+  padding: 0.6rem 0.8rem;
+  border-radius: 6px;
   background: rgba(0, 0, 0, 0.2);
   border: 1px solid var(--glass-border);
   color: white;
   font-family: inherit;
-  font-size: 1rem;
+  font-size: 0.9rem;
   transition: all 0.2s ease;
 }
 
@@ -73,12 +94,13 @@ h1, h2, h3, h4, h5, h6 {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
   background-color: var(--brand);
   color: white;
   border: none;
   font-weight: 500;
+  font-size: 0.95rem;
   cursor: pointer;
   transition: background-color 0.2s, transform 0.1s;
 }
@@ -288,11 +310,51 @@ h1, h2, h3, h4, h5, h6 {
   pointer-events: none;
 }
 
+.bg-code {
+  position: absolute;
+  font-family: 'Courier New', Courier, monospace;
+  color: rgba(255, 255, 255, 0.025);
+  font-size: clamp(2rem, 5vw, 4rem);
+  font-weight: 700;
+  white-space: pre-wrap;
+  pointer-events: none;
+  z-index: -1;
+  user-select: none;
+  line-height: 1.1;
+  overflow: hidden;
+  animation: float 10s ease-in-out infinite alternate;
+  text-shadow: 0 0 20px rgba(255,255,255,0.05);
+}
+
+@keyframes float {
+  0% { transform: translateY(0px) rotate(var(--rotation, 0deg)); }
+  100% { transform: translateY(-20px) rotate(var(--rotation, 0deg)); }
+}
+
+/* Moving light beam effect */
+.light-beam {
+  position: absolute;
+  width: 2px;
+  height: 150px;
+  background: linear-gradient(to bottom, transparent, rgba(59, 130, 246, 0.8), transparent);
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+  z-index: -1;
+  opacity: 0.5;
+  animation: moveBeam 8s linear infinite;
+}
+
+@keyframes moveBeam {
+  0% { transform: translateY(-100vh) translateX(0); opacity: 0; }
+  10% { opacity: 0.5; }
+  90% { opacity: 0.5; }
+  100% { transform: translateY(100vh) translateX(50px); opacity: 0; }
+}
+
 .service-card {
-  padding: 2.5rem;
-  background: linear-gradient(145deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%);
+  padding: 2rem;
+  background: linear-gradient(145deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0.005) 100%);
   border: 1px solid var(--glass-border);
-  border-radius: 16px;
+  border-radius: 12px;
   transition: all 0.3s ease;
   height: 100%;
   display: flex;
@@ -306,15 +368,15 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .service-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: 12px;
-  background: rgba(59, 130, 246, 0.1);
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: rgba(59, 130, 246, 0.08);
   color: var(--brand);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.25rem;
 }
 
 .contact-card:hover {
@@ -418,7 +480,7 @@ h1, h2, h3, h4, h5, h6 {
   }
 
   .experience-item {
-    gap: 1rem !important;
+    gap: 0.8rem !important;
   }
   
   .timeline-icon {
@@ -430,7 +492,7 @@ h1, h2, h3, h4, h5, h6 {
   }
   
   .glass-panel {
-    padding: 1.5rem;
+    padding: 1.25rem;
   }
 
   /* Admin Responsive */
@@ -473,11 +535,11 @@ h1, h2, h3, h4, h5, h6 {
 
 @media (max-width: 480px) {
   .hero-section h1 {
-    font-size: 2.2rem !important;
+    font-size: 1.8rem !important;
   }
   
   h2 {
-    font-size: 1.8rem !important;
+    font-size: 1.5rem !important;
   }
 
   .modal-content {
