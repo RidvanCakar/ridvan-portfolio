@@ -190,7 +190,8 @@ h1, h2, h3, h4, h5, h6 {
 /* Admin Layout */
 .admin-layout {
   display: flex;
-  min-height: 100vh;
+  height: 90vh;
+  overflow: hidden;
 }
 
 .admin-sidebar {
@@ -498,6 +499,8 @@ h1, h2, h3, h4, h5, h6 {
   /* Admin Responsive */
   .admin-layout {
     flex-direction: column;
+    height: auto;
+    overflow: visible;
   }
   
   .admin-sidebar {

@@ -16,6 +16,7 @@ export default function AdminNav() {
     { name: 'Dashboard', path: '/admin' },
     { name: 'Projeler', path: '/admin/projects' },
     { name: 'Deneyimler', path: '/admin/experiences' },
+    { name: '🤖 AI Bilgi Tabanı', path: '/admin/agent-context' },
   ];
 
   return (

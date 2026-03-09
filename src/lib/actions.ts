@@ -52,4 +52,27 @@ export async function deleteExperience(id: number) {
   return { success: true };
 }
 
+// ===== AGENT CONTEXT (Hidden Knowledge Base) ===== //
 
+export async function getAgentContext() {
+  const stmt = db.prepare('SELECT * FROM agent_context ORDER BY category, created_at DESC');
+  return stmt.all() as any[];
+}
+
+export async function addAgentContext(data: { category: string, title: string, content: string }) {
+  const stmt = db.prepare('INSERT INTO agent_context (category, title, content) VALUES (?, ?, ?)');
+  const result = stmt.run(data.category, data.title, data.content);
+  return { id: result.lastInsertRowid };
+}
+
+export async function updateAgentContext(id: number, data: { category: string, title: string, content: string }) {
+  const stmt = db.prepare('UPDATE agent_context SET category = ?, title = ?, content = ? WHERE id = ?');
+  stmt.run(data.category, data.title, data.content, id);
+  return { success: true };
+}
+
+export async function deleteAgentContext(id: number) {
+  const stmt = db.prepare('DELETE FROM agent_context WHERE id = ?');
+  stmt.run(id);
+  return { success: true };
+}

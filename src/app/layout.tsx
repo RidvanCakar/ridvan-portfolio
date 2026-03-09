@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Header from '@/components/Header';
+import ChatWidget from '@/components/ChatWidget';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -50,6 +51,9 @@ export default function RootLayout({
             &copy; {new Date().getFullYear()} Rıdvan Çakar. Tüm hakları saklıdır.
           </div>
         </footer>
+
+        {/* Global AI Assistant Widget */}
+        <ChatWidget />
       </body>
     </html>
   );
