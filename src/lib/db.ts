@@ -67,6 +67,10 @@ export async function initDb() {
 }
 
 // Initialize DB on first import
-initDb().catch(console.error);
+initDb().then(() => {
+  console.log('✅ Database initialized successfully');
+}).catch(err => {
+  console.error('❌ Database initialization failed:', err);
+});
 
 export default db;
