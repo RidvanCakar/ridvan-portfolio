@@ -66,11 +66,13 @@ export async function initDb() {
   `);
 }
 
-// Initialize DB on first import
-initDb().then(() => {
+// Export a promise that resolves when the database is initialized.
+// This allows actions to wait for the schema to be ready.
+export const dbReady = initDb().then(() => {
   console.log('✅ Database initialized successfully');
 }).catch(err => {
   console.error('❌ Database initialization failed:', err);
+  throw err;
 });
 
 export default db;
