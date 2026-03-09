@@ -189,7 +189,7 @@ export default function ContactForm() {
           boxShadow: status === 'sending' ? 'none' : '0 2px 10px rgba(59,130,246,0.25)',
         }}
       >
-        {status === 'sending' ? '⏳ Gönderiliyor...' : '🚀 Teklif İsteğini Gönder'}
+        {status === 'sending' ? '⏳ Gönderiliyor...' : '🚀 Teklif  Gönder'}
       </button>
 
       {status === 'error' && (
