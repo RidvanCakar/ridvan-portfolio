@@ -17,6 +17,8 @@ export default function AdminNav() {
     { name: 'Projeler', path: '/admin/projects' },
     { name: 'Deneyimler', path: '/admin/experiences' },
     { name: '🤖 AI Bilgi Tabanı', path: '/admin/agent-context' },
+    { name: '💬 Canlı Sohbetler (24 Saat)', path: '/admin/chat-logs' },
+    { name: '📬 Gelen Mesajlar', path: '/admin/messages' },
   ];
 
   return (

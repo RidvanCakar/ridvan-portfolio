@@ -76,3 +76,53 @@ export async function deleteAgentContext(id: number) {
   stmt.run(id);
   return { success: true };
 }
+
+// ===== CHAT LOGS ===== //
+
+export async function getChatLogs() {
+  const stmt = db.prepare('SELECT * FROM chat_logs ORDER BY created_at DESC');
+  return stmt.all() as any[];
+}
+
+export async function addChatLog(data: { session_id: string, role: string, content: string, ip_address?: string, user_agent?: string }) {
+  // SQLite might throw errors if trying to insert into columns that don't exist yet (if user doesn't restart/migrate db)
+  // To be safe without a full migration system, we'll try/catch the new columns
+  try {
+    const stmt = db.prepare('INSERT INTO chat_logs (session_id, role, content, ip_address, user_agent) VALUES (?, ?, ?, ?, ?)');
+    const result = stmt.run(data.session_id, data.role, data.content, data.ip_address || '', data.user_agent || '');
+    return { id: result.lastInsertRowid };
+  } catch (err) {
+    // Fallback if the table hasn't been updated with new columns yet
+    const stmt = db.prepare('INSERT INTO chat_logs (session_id, role, content) VALUES (?, ?, ?)');
+    const result = stmt.run(data.session_id, data.role, data.content);
+    return { id: result.lastInsertRowid };
+  }
+}
+
+// ===== CONTACT MESSAGES ===== //
+
+export async function getContactMessages() {
+  const stmt = db.prepare('SELECT * FROM contact_messages ORDER BY created_at DESC');
+  return stmt.all() as any[];
+}
+
+export async function addContactMessage(data: { name: string, email: string, phone?: string, subject: string, budget?: string, message: string }) {
+  const stmt = db.prepare('INSERT INTO contact_messages (name, email, phone, subject, budget, message) VALUES (?, ?, ?, ?, ?, ?)');
+  const result = stmt.run(data.name, data.email, data.phone || '', data.subject, data.budget || '', data.message);
+  return { id: result.lastInsertRowid };
+}
+
+export async function toggleContactMessageRead(id: number) {
+  const current = db.prepare('SELECT is_read FROM contact_messages WHERE id = ?').get(id) as any;
+  if (current) {
+    const stmt = db.prepare('UPDATE contact_messages SET is_read = ? WHERE id = ?');
+    stmt.run(current.is_read ? 0 : 1, id);
+  }
+  return { success: true };
+}
+
+export async function deleteContactMessage(id: number) {
+  const stmt = db.prepare('DELETE FROM contact_messages WHERE id = ?');
+  stmt.run(id);
+  return { success: true };
+}

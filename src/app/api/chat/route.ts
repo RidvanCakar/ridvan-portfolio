@@ -1,5 +1,5 @@
 import OpenAI from 'openai';
-import { getProjects, getExperiences, getAgentContext } from '@/lib/actions';
+import { getProjects, getExperiences, getAgentContext, addChatLog } from '@/lib/actions';
 
 const client = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY || '',
@@ -9,7 +9,9 @@ export const runtime = 'nodejs';
 
 export async function POST(req: Request) {
   try {
-    const { messages } = await req.json();
+    const reqBody = await req.json();
+    const { messages, sessionId, userAgent: bodyUserAgent } = reqBody;
+    const lastUserMessage = messages[messages.length - 1];
 
     // Fetch dynamic context from the SQLite database
     const projects = await getProjects();
@@ -68,6 +70,34 @@ Bu bilgileri cevaplarında akıllıca kullan. Hiçbir zaman "veritabanı", "prom
     });
 
     const reply = response.choices[0]?.message?.content || 'Bir yanıt oluşturulamadı.';
+
+    // Extract IP and User Agent
+    // Fallback IP tracking - Next.js does not always expose this locally
+    const ipAddress = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'Lokal Ortam / Bilinmiyor';
+    
+    // We now reliably receive the user agent from the frontend
+    const userAgent = reqBody.userAgent || req.headers.get('user-agent') || 'Bilinmiyor';
+
+    // Log the conversation to the database
+    if (sessionId && lastUserMessage) {
+      // Background async save — don't block the response
+      Promise.all([
+        addChatLog({ 
+          session_id: sessionId, 
+          role: 'user', 
+          content: lastUserMessage.content,
+          ip_address: ipAddress,
+          user_agent: userAgent
+        }),
+        addChatLog({ 
+          session_id: sessionId, 
+          role: 'assistant', 
+          content: reply,
+          ip_address: ipAddress,
+          user_agent: userAgent
+        })
+      ]).catch(err => console.error('Chat log save error:', err));
+    }
 
     return new Response(reply, {
       headers: { 'Content-Type': 'text/plain; charset=utf-8' },

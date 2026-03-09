@@ -13,7 +13,13 @@ export default function ChatWidget() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [sessionId, setSessionId] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // Generate a simple unique ID for the current browsing session
+    setSessionId(Math.random().toString(36).substring(2, 15) + Date.now().toString(36));
+  }, []);
 
   useEffect(() => {
     if (messagesEndRef.current) {
@@ -36,7 +42,9 @@ export default function ChatWidget() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          messages: [...messages, newUserMsg].map(m => ({ role: m.role, content: m.content }))
+          messages: [...messages, newUserMsg].map(m => ({ role: m.role, content: m.content })),
+          sessionId,
+          userAgent: window.navigator.userAgent
         }),
       });
 
