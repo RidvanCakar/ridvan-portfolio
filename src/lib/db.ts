@@ -1,14 +1,20 @@
-import Database from 'better-sqlite3';
-import path from 'path';
+import { createClient } from '@libsql/client';
 
-// Using a path relative to the current working directory to ensure it is found in both dev and prod
-const dbPath = path.resolve(process.cwd(), 'portfolio.sqlite');
-const db = new Database(dbPath);
+// Use Turso (remote) when TURSO_CONNECTION_URL is set (production/Vercel),
+// otherwise fall back to a local SQLite file (development).
+const db = createClient(
+  process.env.TURSO_CONNECTION_URL
+    ? {
+        url: process.env.TURSO_CONNECTION_URL,
+        authToken: process.env.TURSO_AUTH_TOKEN,
+      }
+    : {
+        url: 'file:portfolio.sqlite',
+      }
+);
 
-db.pragma('journal_mode = WAL');
-
-export function initDb() {
-  db.exec(`
+export async function initDb() {
+  await db.executeMultiple(`
     CREATE TABLE IF NOT EXISTS projects (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       title TEXT NOT NULL,
@@ -46,13 +52,6 @@ export function initDb() {
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );
 
-    -- Minimalist auto-cleanup trigger: deletes logs older than 24 hours on every new insert
-    CREATE TRIGGER IF NOT EXISTS cleanup_old_chat_logs
-    AFTER INSERT ON chat_logs
-    BEGIN
-      DELETE FROM chat_logs WHERE created_at < datetime('now', '-24 hours');
-    END;
-
     CREATE TABLE IF NOT EXISTS contact_messages (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT NOT NULL,
@@ -64,10 +63,10 @@ export function initDb() {
       is_read INTEGER DEFAULT 0,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );
-
   `);
 }
 
-initDb();
+// Initialize DB on first import
+initDb().catch(console.error);
 
 export default db;

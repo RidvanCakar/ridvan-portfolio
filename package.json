@@ -11,9 +11,8 @@
   "dependencies": {
     "@ai-sdk/openai": "^3.0.41",
     "@ai-sdk/react": "^3.0.118",
-    "@types/better-sqlite3": "^7.6.13",
+    "@libsql/client": "^0.17.0",
     "ai": "^6.0.116",
-    "better-sqlite3": "^12.6.2",
     "next": "16.1.6",
     "nodemailer": "^8.0.1",
     "openai": "^6.27.0",
