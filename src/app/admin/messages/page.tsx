@@ -19,10 +19,12 @@ export default function MessagesAdmin() {
 
   const formatDate = (dateStr: string) => {
     try {
+      const utcStr = dateStr.endsWith('Z') ? dateStr : dateStr + 'Z';
       return new Intl.DateTimeFormat('tr-TR', {
         day: '2-digit', month: '2-digit', year: 'numeric',
-        hour: '2-digit', minute: '2-digit'
-      }).format(new Date(dateStr));
+        hour: '2-digit', minute: '2-digit',
+        timeZone: 'Europe/Istanbul'
+      }).format(new Date(utcStr));
     } catch { return dateStr; }
   };
 

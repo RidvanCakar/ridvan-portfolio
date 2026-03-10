@@ -1,5 +1,6 @@
 import OpenAI from 'openai';
-import { getProjects, getExperiences, getAgentContext, addChatLog } from '@/lib/actions';
+import { getProjects, getExperiences, getAgentContext } from '@/lib/actions';
+import db, { dbReady } from '@/lib/db';
 
 const client = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY || '',
@@ -78,25 +79,21 @@ Bu bilgileri cevaplarında akıllıca kullan. Hiçbir zaman "veritabanı", "prom
     // We now reliably receive the user agent from the frontend
     const userAgent = reqBody.userAgent || req.headers.get('user-agent') || 'Bilinmiyor';
 
-    // Log the conversation to the database
+    // Log the conversation to the database — use db directly for reliability
     if (sessionId && lastUserMessage) {
-      // Background async save — don't block the response
-      Promise.all([
-        addChatLog({ 
-          session_id: sessionId, 
-          role: 'user', 
-          content: lastUserMessage.content,
-          ip_address: ipAddress,
-          user_agent: userAgent
-        }),
-        addChatLog({ 
-          session_id: sessionId, 
-          role: 'assistant', 
-          content: reply,
-          ip_address: ipAddress,
-          user_agent: userAgent
-        })
-      ]).catch(err => console.error('Chat log save error:', err));
+      try {
+        await dbReady;
+        await db.execute({
+          sql: 'INSERT INTO chat_logs (session_id, role, content, ip_address, user_agent) VALUES (?, ?, ?, ?, ?)',
+          args: [sessionId, 'user', lastUserMessage.content, ipAddress, userAgent]
+        });
+        await db.execute({
+          sql: 'INSERT INTO chat_logs (session_id, role, content, ip_address, user_agent) VALUES (?, ?, ?, ?, ?)',
+          args: [sessionId, 'assistant', reply, ipAddress, userAgent]
+        });
+      } catch (err) {
+        console.error('Chat log save error:', err);
+      }
     }
 
     return new Response(reply, {

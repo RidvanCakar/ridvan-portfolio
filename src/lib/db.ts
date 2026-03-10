@@ -64,6 +64,19 @@ export async function initDb() {
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );
   `);
+
+  // Migration: add missing columns to existing tables (safe — errors on duplicate are caught)
+  const migrations = [
+    'ALTER TABLE chat_logs ADD COLUMN ip_address TEXT',
+    'ALTER TABLE chat_logs ADD COLUMN user_agent TEXT',
+  ];
+  for (const sql of migrations) {
+    try {
+      await db.execute(sql);
+    } catch {
+      // Column already exists — ignore
+    }
+  }
 }
 
 // Export a promise that resolves when the database is initialized.

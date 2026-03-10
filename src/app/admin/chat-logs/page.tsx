@@ -20,11 +20,14 @@ export default function ChatLogsAdmin() {
 
   const formatDate = (dateStr: string) => {
     try {
-      const date = new Date(dateStr);
-      // Format: "14:30 - 09.03.2026"
+      // SQLite CURRENT_TIMESTAMP is UTC — append 'Z' so JS parses it as UTC
+      const utcStr = dateStr.endsWith('Z') ? dateStr : dateStr + 'Z';
+      const date = new Date(utcStr);
+      // Format in Turkey timezone: "14:30 - 09.03.2026"
       return new Intl.DateTimeFormat('tr-TR', { 
         hour: '2-digit', minute: '2-digit',
-        day: '2-digit', month: '2-digit', year: 'numeric'
+        day: '2-digit', month: '2-digit', year: 'numeric',
+        timeZone: 'Europe/Istanbul'
       }).format(date);
     } catch {
       return dateStr;
