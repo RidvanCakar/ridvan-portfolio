@@ -2,6 +2,8 @@ import { getProjects, getExperiences } from '@/lib/actions';
 import ExperienceItem from '@/components/ExperienceItem';
 import ContactForm from '@/components/ContactForm';
 
+export const dynamic = 'force-dynamic';
+
 export default async function Home() {
   const projects = await getProjects();
   const experiences = await getExperiences();
