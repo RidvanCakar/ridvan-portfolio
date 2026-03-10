@@ -38,7 +38,7 @@ export default async function Home() {
           marginBottom: '0.75rem',
           animation: 'fadeInDown 0.8s ease'
         }}>
-          Sizin İçin Kodluyorumm
+          Sizin İçin Kodluyorum
         </div>
         <h1 style={{
           fontSize: 'clamp(1.8rem, 3.5vw, 3rem)',
