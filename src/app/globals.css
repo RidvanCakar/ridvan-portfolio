@@ -187,67 +187,103 @@ h1, h2, h3, h4, h5, h6 {
   font-size: 0.875rem;
 }
 
-/* Admin Layout */
+/* Admin Layout - Premium Redesign */
 .admin-layout {
   display: flex;
   height: 90vh;
   overflow: hidden;
+  position: relative;
 }
 
 .admin-sidebar {
-  width: 260px;
-  background: rgba(255, 255, 255, 0.02);
+  width: 280px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border-right: 1px solid var(--glass-border);
-  padding: 2rem 1rem;
+  padding: 2.5rem 1.5rem;
   display: flex;
   flex-direction: column;
+  z-index: 10;
+  box-shadow: 5px 0 30px rgba(0, 0, 0, 0.2);
 }
 
 .admin-sidebar h2 {
-  padding: 0 1rem;
-  margin-bottom: 2rem;
-  color: rgba(255,255,255,0.9);
+  padding: 0 0.5rem;
+  color: #fff;
+  font-size: 1.5rem;
+  letter-spacing: -0.5px;
+  text-shadow: 0 0 20px rgba(255,255,255,0.1);
+  margin: 0;
+}
+
+.admin-sidebar-header {
+  margin-bottom: 2.5rem;
 }
 
 .admin-nav {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.6rem;
   flex: 1;
 }
 
 .admin-nav a {
-  padding: 0.75rem 1rem;
-  border-radius: 8px;
-  transition: background 0.2s;
+  padding: 0.85rem 1.2rem;
+  border-radius: 10px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
 }
 
-.admin-nav a:hover, .admin-nav a.active {
-  background: var(--glass-bg);
+.admin-nav a:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  transform: translateX(4px);
+}
+
+.admin-nav a.active {
+  background: linear-gradient(90deg, rgba(59, 130, 246, 0.15) 0%, rgba(59, 130, 246, 0.05) 100%);
+  color: #fff;
+  box-shadow: inset 3px 0 0 var(--brand);
+  text-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
 }
 
 .admin-nav button.logout-btn {
   background: none;
-  border: none;
+  border: 1px solid rgba(239, 68, 68, 0.2);
   color: var(--danger);
-  padding: 0.75rem 1rem;
-  text-align: left;
+  padding: 0.85rem 1.2rem;
+  text-align: center;
   font-family: inherit;
   font-size: 1rem;
   cursor: pointer;
-  border-radius: 8px;
-  transition: background 0.2s;
+  border-radius: 10px;
+  transition: all 0.3s ease;
   margin-top: auto;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
 }
 
 .admin-nav button.logout-btn:hover {
   background: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(239, 68, 68, 0.15);
 }
 
 .admin-main {
   flex: 1;
   padding: 3rem;
   overflow-y: auto;
+  background: radial-gradient(circle at top right, rgba(59, 130, 246, 0.03) 0%, transparent 60%);
 }
 
 .page-header {
@@ -464,7 +500,7 @@ h1, h2, h3, h4, h5, h6 {
   }
 
   .hero-section {
-    padding-top: 9rem !important;
+    padding-top: 5rem !important;
     align-items: center !important;
     text-align: center;
   }
@@ -496,7 +532,7 @@ h1, h2, h3, h4, h5, h6 {
     padding: 1.25rem;
   }
 
-  /* Admin Responsive */
+  /* Admin Responsive - Hamburger Menu Navigation */
   .admin-layout {
     flex-direction: column;
     height: auto;
@@ -508,21 +544,53 @@ h1, h2, h3, h4, h5, h6 {
     height: auto;
     border-right: none;
     border-bottom: 1px solid var(--glass-border);
-    padding: 1rem;
+    padding: 1.5rem;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    z-index: 20;
+    background: rgba(15, 16, 20, 0.85);
   }
-  
+
+  .admin-sidebar-header {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0;
+  }
+
+  .admin-sidebar h2 {
+    margin-bottom: 0;
+    padding: 0;
+  }
+
+  .admin-hamburger {
+    display: flex;
+  }
+
   .admin-nav {
-    flex-direction: row;
-    flex-wrap: wrap;
+    display: none;
+    flex-direction: column;
     gap: 0.5rem;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--glass-border);
+    animation: fadeInDown 0.3s ease;
+  }
+
+  .admin-nav.open {
+    display: flex;
   }
   
-  .admin-nav a, .admin-nav button {
-    flex: 1;
-    text-align: center;
-    min-width: 120px;
-    font-size: 0.9rem;
-    padding: 0.5rem;
+  .admin-nav a, .admin-nav button.logout-btn {
+    text-align: left;
+    width: 100%;
+    border-radius: 8px;
+    padding: 0.85rem 1rem;
+    justify-content: flex-start;
+  }
+
+  .admin-nav button.logout-btn {
+    margin-top: 0.5rem;
   }
   
   .admin-main {
@@ -533,6 +601,23 @@ h1, h2, h3, h4, h5, h6 {
     flex-direction: column;
     align-items: flex-start;
     gap: 1rem;
+  }
+
+  /* Chat Widget Responsive */
+  .chat-fab-container {
+    right: 1rem !important;
+    bottom: max(1rem, env(safe-area-inset-bottom)) !important;
+  }
+  
+  .chat-window {
+    width: 100% !important;
+    height: 100dvh !important;
+    max-height: 100dvh !important;
+    max-width: 100vw !important;
+    bottom: 0 !important;
+    right: 0 !important;
+    border-radius: 0 !important;
+    border: none !important;
   }
 }
 

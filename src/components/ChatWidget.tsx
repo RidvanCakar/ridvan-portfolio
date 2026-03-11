@@ -89,7 +89,7 @@ export default function ChatWidget() {
       {/* Floating Bubble (closed state) */}
       {!isOpen && (
         <button
-          className="chat-fab"
+          className="chat-fab chat-fab-container"
           onClick={() => setIsOpen(true)}
           style={{
             position: 'fixed',
@@ -129,14 +129,13 @@ export default function ChatWidget() {
 
       {/* Chat Window */}
       {isOpen && (
-        <div style={{
+        <div className="chat-window" style={{
           position: 'fixed',
           bottom: '2rem',
           right: '2rem',
           width: '360px',
           height: '580px',
-          maxHeight: '90vh',
-          maxWidth: 'calc(100vw - 2rem)',
+          maxHeight: 'calc(100vh - 4rem)',
           backgroundColor: 'rgba(10, 11, 15, 0.98)',
           backdropFilter: 'blur(24px)',
           WebkitBackdropFilter: 'blur(24px)',
